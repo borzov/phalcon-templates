@@ -35,8 +35,7 @@ try {
     /**
      * Handle the request
      */
-    $application = new \Phalcon\Mvc\Application();
-    $application->setDI($di);
+    $application = new \Phalcon\Mvc\Application($di);
 
     $response = $application->handle()->getContent();
 

@@ -1,18 +1,9 @@
 <?php
 
-use Phalcon\DI\FactoryDefault,
-    Phalcon\Mvc\View,
-    Phalcon\Mvc\Dispatcher,
-    Phalcon\Mvc\Url as UrlResolver,
-    Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter,
-    Phalcon\Mvc\View\Engine\Volt as VoltEngine,
-    Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter,
-    Phalcon\Session\Adapter\Files as SessionAdapter;
-
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
  */
-$di = new FactoryDefault();
+$di = new \Phalcon\DI\FactoryDefault();
 
 /**
  * A component that allows manage static resources such as css stylesheets or javascript libraries in a web application
@@ -20,7 +11,7 @@ $di = new FactoryDefault();
 $di->set(
    'assets',
        function (){
-           return new Phalcon\Assets\Manager();
+           return new \Phalcon\Assets\Manager();
        },
        true
 );
@@ -31,7 +22,7 @@ $di->set(
 $di->set(
    'url',
        function () use ($config){
-           $url = new UrlResolver();
+           $url = new \Phalcon\Mvc\Url();
            $url->setBaseUri($config->application->baseUri);
            return $url;
        },
@@ -45,7 +36,7 @@ $di->set(
    'view',
        function () use ($config){
 
-           $view = new View();
+           $view = new \Phalcon\Mvc\View();
 
            $view->setViewsDir($config->application->viewsDir);
 
@@ -53,7 +44,7 @@ $di->set(
                 array(
                     '.volt'  => function ($view, $di) use ($config){
 
-                            $volt = new VoltEngine($view, $di);
+                            $volt = new \Phalcon\Mvc\View\Engine\Volt($view, $di);
 
                             $volt->setOptions(
                                  array(
@@ -64,7 +55,7 @@ $di->set(
 
                             return $volt;
                         },
-                    '.phtml' => 'Phalcon\Mvc\View\Engine\Php'
+                    '.phtml' => '\Phalcon\Mvc\View\Engine\Php'
                 )
            );
 
@@ -79,7 +70,7 @@ $di->set(
 $di->set(
    'db',
        function () use ($config){
-           return new DbAdapter(array(
+           return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
                'host'     => $config->database->host,
                'username' => $config->database->username,
                'password' => $config->database->password,
@@ -95,7 +86,7 @@ $di->set(
 $di->set(
    'modelsMetadata',
        function (){
-           return new MetaDataAdapter();
+           return new \Phalcon\Mvc\Model\Metadata\Memory();
        }
 );
 
@@ -105,7 +96,7 @@ $di->set(
 $di->set(
    'session',
        function (){
-           $session = new SessionAdapter();
+           $session = new \Phalcon\Session\Adapter\Files();
            $session->start();
            return $session;
        }
@@ -117,7 +108,7 @@ $di->set(
 $di->set(
    'dispatcher',
        function (){
-           $dispatcher = new Dispatcher();
+           $dispatcher = new \Phalcon\Mvc\Dispatcher();
            $dispatcher->setDefaultNamespace('Application\Controllers\Frontend');
            return $dispatcher;
        }
